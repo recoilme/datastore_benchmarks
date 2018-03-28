@@ -31,9 +31,9 @@ var doRandomReads = false // false: sequential reads.
 
 // /* const */ var valLen = chunker.DefaultBlockSize
 // TODO: Why isn't DefaultBlockSize a constant?
-const valLen = 9 * utils.KiB // Average file size in go-ipfs
+const valLen = 200 * utils.KiB // Average file size in go-ipfs
 // TODO: Parametrize this.
-const dataMaxSize = 100 * utils.MiB // rough approximation
+const dataMaxSize = 1000 * utils.MiB // rough approximation
 var entriesNum = int(math.Floor(dataMaxSize / float64(valLen)))
 
 
@@ -59,6 +59,10 @@ func createBadgerDB(path string) (repo.Datastore, error) {
 }
 
 func createFlatfsDB(path string) (repo.Datastore, error) {
+	if _, err := os.Stat(path); err == nil {
+		os.RemoveAll(path)
+	}
+
 	dsc, err := fsrepo.FlatfsDatastoreConfig(map[string]interface{}{
 		"path": flatfsDBPath,
 		"shardFunc": "/repo/flatfs/shard/v1/next-to-last/2",

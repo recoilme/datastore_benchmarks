@@ -6,7 +6,6 @@ import (
 	"runtime/pprof"
 	"math/rand"
 	"math"
-	"path"
 	"path/filepath"
 
 	"github.com/schomatis/datastore_benchmarks/utils"
@@ -21,19 +20,13 @@ import (
 	cid "gx/ipfs/QmcZfnkapfECQGcLZaf9B79NRg7cRa9EnZh4LSbkCzwNvY/go-cid"
 )
 
-const outDir = "out"
-var badgerDBPath = path.Join(outDir, "dbs", "badger")
-var flatfsDBPath = path.Join(outDir, "dbs", "flatfs")
-var badgerProfPath = path.Join(outDir, "prof", "badger", "cpu.prof")
-var flatfsProfPath = path.Join(outDir, "prof", "flatfs", "cpu.prof")
-// TODO: This could be handled in a vector with callbacks and configuration.
 var doRandomReads = false // false: sequential reads.
 
 // /* const */ var valLen = chunker.DefaultBlockSize
 // TODO: Why isn't DefaultBlockSize a constant?
-const valLen = 200 * utils.KiB // Average file size in go-ipfs
+const valLen = 100 * utils.KiB // Average file size in go-ipfs
 // TODO: Parametrize this.
-const dataMaxSize = 1000 * utils.MiB // rough approximation
+const dataMaxSize = 250 * utils.MiB // rough approximation
 var entriesNum = int(math.Floor(dataMaxSize / float64(valLen)))
 
 
@@ -64,7 +57,7 @@ func createFlatfsDB(path string) (repo.Datastore, error) {
 	}
 
 	dsc, err := fsrepo.FlatfsDatastoreConfig(map[string]interface{}{
-		"path": flatfsDBPath,
+		"path": utils.FlatfsDBPath,
 		"shardFunc": "/repo/flatfs/shard/v1/next-to-last/2",
 		"sync": true})
 	if err != nil {
@@ -75,16 +68,15 @@ func createFlatfsDB(path string) (repo.Datastore, error) {
 }
 
 func main() {
-	badgerDB, _ := createBadgerDB(badgerDBPath)
-	flatfsDB, _ := createFlatfsDB(flatfsDBPath)
+	badgerDB, _ := createBadgerDB(utils.BadgerDBPath)
+	// flatfsDB, _ := createFlatfsDB(flatfsDBPath)
 
-	testDB(badgerDB, badgerProfPath, "svg")
-	testDB(flatfsDB, flatfsProfPath, "svg")
+	testDB(badgerDB, utils.BadgerProfPath, "svg")
+	// testDB(flatfsDB, flatfsProfPath, "svg")
 }
 
 func testDB(db repo.Datastore, profPath string, profFormat string) {
-	os.MkdirAll(filepath.Dir(profPath), os.ModePerm);
-	profFile, err := os.Create(profPath)
+	profFile, err := utils.CreateFileAndDirs(profPath)
 	if err != nil {
 		panic(err)
 	}

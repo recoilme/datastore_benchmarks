@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"math"
 	"path/filepath"
+	"time"
 
 	"github.com/schomatis/datastore_benchmarks/utils"
 
@@ -46,7 +47,10 @@ func createBadgerDB(path string) (repo.Datastore, error) {
 
 	var db repo.Datastore
 
-	db, _= badgerds.NewDatastore(path, &defopts)
+	db, err := badgerds.NewDatastore(path, &defopts)
+	if err != nil {
+		panic(err)
+	}
 
 	return db, nil
 }
@@ -96,6 +100,7 @@ func testDB(db repo.Datastore, profPath string, profFormat string) {
 	}
 
 	fmt.Println("Inside profiling..")
+	started := time.Now()
 	pprof.StartCPUProfile(profFile)
 
 	// TODO: Should close and reopen the DB before the read tests?
@@ -116,6 +121,7 @@ func testDB(db repo.Datastore, profPath string, profFormat string) {
 	}
 
 	pprof.StopCPUProfile()
+	fmt.Printf("Get time: %s\n", time.Since(started))
 
 	// TODO: Include the close operation in the profile?
 	db.Close()

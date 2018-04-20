@@ -3,3 +3,4 @@ out/*
 !out/README.md
 .DS_Store
 cmd/badger/out/
+cmd/slowpoke/out

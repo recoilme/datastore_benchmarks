@@ -89,6 +89,7 @@ func testDB(storage string, profPath string, profFormat string) {
 	for i := 0; i < entriesNum; i++ {
 		//txn.Get(keyList[i][:])
 		slowpoke.Get(storage, keyList[i][:])
+		//slowpoke has gets command
 	}
 	//txn.Discard()
 

@@ -1,14 +1,14 @@
 package main
 
 import (
-	"fmt"
-	"os"
-	"runtime/pprof"
-	"math/rand"
-	"math"
-	"path/filepath"
-	"time"
 	"crypto/sha256"
+	"fmt"
+	"math"
+	"math/rand"
+	"os"
+	"path/filepath"
+	"runtime/pprof"
+	"time"
 	//"encoding/hex"
 
 	"github.com/schomatis/datastore_benchmarks/utils"
@@ -19,7 +19,6 @@ import (
 const valLen = 10
 const dataMaxSize = 1 * utils.MiB // rough approximation
 var entriesNum = int(math.Floor(dataMaxSize / float64(valLen)))
-
 
 func createBadgerDB(path string, blockSize int) (*badger.DB, badger.Options, error) {
 	if _, err := os.Stat(path); err == nil {
@@ -37,7 +36,7 @@ func createBadgerDB(path string, blockSize int) (*badger.DB, badger.Options, err
 	// defopts.MaxTableSize = 1 * MiB
 	// defopts.ValueLogLoadingMode = badgerOptions.MemoryMap
 
-	opts.BlockSize = blockSize
+	//opts.BlockSize = blockSize
 
 	db, err := badger.Open(opts)
 	if err != nil {

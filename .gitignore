@@ -1,3 +1,5 @@
 # Ignore output data directory
 out/*
 !out/README.md
+.DS_Store
+cmd/badger/out/
